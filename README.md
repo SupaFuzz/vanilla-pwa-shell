@@ -6,6 +6,10 @@ this is the shell of an installable PWA with serviceWorker (with working update 
 
 That fact is frankly the differentiator. Every single demo, blog post, and code snippet spat out by AI assistants that I could find was broken or outdated to the point it might as well have been broken.
 
+easy enough to clone the git and try it for yourself, but if you wanna just see it working, I've got it installed on a public webserver [here](https://www.hicox.com/vanilla-pwa-shell/)
+
+
+
 ## you may ask yourself "how do I work this"?
 
 The only real requirement is that you've gotta webserver that can serve flat files and that has an SSL certificate trusted by default on your OS (self-signed won't cut it). This is entirely because per-spec, browser engines will refuse to spin up serviceWorker threads unless served from an origin with an OS trusted SSL cert. Though it didn't used to be the case, I see docs and blog posts stating that `localhost` is now a trusted origin in all the major browsers. I haven't tried this myself, but I've heard it might work, so there's that. If not, good ol' letsencrypt certbot should get the job done.
