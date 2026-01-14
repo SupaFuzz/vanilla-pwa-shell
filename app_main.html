@@ -5,20 +5,142 @@
         <meta charset="utf-8" />
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-title" content="NSCAN6">
-        <link rel="apple-touch-icon" href="./gfx/icons/app_touch_icon.svg">
+        <link rel="apple-touch-icon" href="./gfx/app_touch_icon.svg">
+
+        <!-- jazzhands -->
+        <link rel="icon" type="image/x-icon" href="./gfx/app_touch_icon.svg">
 
         <!-- make it an installable pwa -->
         <link rel="manifest" href="./manifest.json">
 
         <!-- pull in the app's stylesheet -->
         <link rel="stylesheet" type="text/css" href="./main.css">
+
+        <!-- local stylez -->
+        <style>
+            div.wrapper {
+                display: grid;
+                height: 100vh;
+                width: 100vw;
+                overflow-y: auto;
+                justify-items: center;
+            }
+            div.content {
+                font-size: 1rem;
+                width: 66vw;
+                color: var(--theme-text-color);
+            }
+            .code {
+                font-family: monospace;
+                white-space: nowrap;
+            }
+            a {
+                color: var(--theme-main-color);
+            }
+            .buttonContainer {
+                display: flex;
+                flex-direction: row-reverse;
+                margin: .5rem;
+                width: 66vw;
+                position: sticky;
+            }
+            .buttonContainer button {
+                background-color: transparent;
+                border-radius: 1rem;
+                color: var(--theme-main-color);
+                border: .128rem solid var(--theme-main-color);
+                margin: .25rem;
+                padding: .25rem .66rem .25rem .6r6em;
+                font-family: var(--theme-control-font, Arial);
+                height: min-content;
+            }
+            .buttonContainer button:disabled {
+                opacity: .5;
+            }
+            .buttonContainer button:active:not(:disabled) {
+                color: var(--theme-background-color);
+                background-color: var(--theme-main-color);
+            }
+            ul li {
+                margin: .5rem;
+            }
+        </style>
+
+        <!-- light/dark mode toggle, just because I guess -->
+        <script>
+            document.addEventListener("DOMContentLoaded", (evt) => {
+                document.getElementById('btnUImode').addEventListener('click', (evt) => {
+                    document.body.style.transition = "all .4s ease-in-out";
+                    document.documentElement.dataset.theme = (evt.target.textContent == "Light Mode")?"light":"dark";
+                    evt.target.textContent = (evt.target.textContent == "Light Mode")?"Dark Mode":"Light Mode";
+                    setTimeout(() => { document.body.style.removeProperty('transition'); }, 600);
+                });
+            });
+        </script>
+
+        <!-- the app code -->
+        <script src="./lib/app.js"></script>
+
     </head>
     <body>
-        <h1>this is a test</h1>
-        <p>
-            Left off here (1/13/26 @ 2130)
-            next up: pull in the serviceWorker stuff
-            and demo the check for updates button
-        </p>
+        <div class="wrapper">
+            <div class="buttonContainer">
+                <button id="btnCheckForUpdates">Check for Updates</button>
+                <button id="btnInstallUpdate" disabled>Install &amp; Restart</button>
+                <button id="btnUImode">Light Mode</button>
+            </div>
+            <div class="content">
+                <h1>Demo App</h1>
+                <p>
+                    This app is being served from a persistent offline cache
+                    managed by a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API">serviceWorker</a> thread <span class="code">(./serviceWorker.js)</span>.
+                </p>
+                <p>
+                    This allows the app to run even when the client is offline (or the server is for that matter). You will find that you need to release changes to the codebase
+                    and that simply asking the user to quit/reload the app will not pull in these code changes from the server. Even if loaded
+                    in a browser context, the user will not be able to retrieve code updates from the server via the browser's reload button.
+                </p>
+                <p>
+                    To update the app, the <a href="https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/update" class="code">.update()</a>
+                    function on the serviceWorker thread's <a href="https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration" class="code">registration interface</a>
+                    needs to be called. There is a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers">whole lot more to it than that</a>, putting
+                    it mildly. This app shell handles the complicated bits for you in as plain and straightforward of a way as possible (see <strong class="code">./lib/app.js</strong> &amp; <strong class="code">./serviceWorker.js</strong>).
+                    This isn't a tutorial, but also it's intended to be possible to easily figure out from the code itself, if you're curious.
+                </p>
+                <p>
+                    The app shell will check for app updates periodically (see the <strong class="code">app_update_check_interval</strong> var in <span class="code">./lib/app.js</span>), the user can also
+                    force the app to check for an update in real time via the <strong>Check For Updates</strong> button above. When an app update is found, the
+                    <strong>Install &amp; Restart</strong> button will be enabled.
+                </p>
+                <h2>Okay, how do I release an update?</h2>
+                <ol>
+                    <li>Make your code changes</li>
+                    <li>Update <span class="code">./serviceWorker.js</span><br>
+                        <ul>
+                            <li>Edit the <strong class="code">file_manifest</strong> array<br>
+                                <i>be sure to add any new files and remove any removed files</i>
+                            </li>
+                            <li>update the <strong class="code">CACHE_NAME</strong> variable<br>
+                                <i>this is super important</i>
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+                <h3>This seems kinda sus</h3>
+                <p>
+                    It is fam, it is. If you want a more enterprisey solution I suggest Google's <a href="https://developer.chrome.com/docs/workbox">workbox</a><br><br>
+                    I have my reasons for building this, and they include (in no particular order): not being beholden to the whims of a gigantic oligarch controlled
+                    tech company, not trusting the number and scale of external libraries used, that the huge honking behemoth of tooling required to use it offends
+                    my sensibilities, and most of all workbox is so impenetrbably dense with functionality I'll never use, and complex that
+                    <i>it is impossible for me to actually understand what it's even doing</i>.
+                </p>
+                <p>
+                    If you vibe with where I'm coming from you'll probably dig this. What I've built here is completely vanilla, and not necessarily a tutorial, but
+                    also simple enough that it could be a tutorial if you're even mildly curious. It works in January of 2026 which is way more than I can say
+                    for 90% of the demos and tutorials I googled up, and the code spit out by AI assistants in my journey figuring out how to build this. That being
+                    said: this is bespoke hand-crafted artisan code. Trust but verify. If you're gonna put this on prod, do your dilligence, m'kay?
+                </p>
+            </div>
+        </div>
     </body>
 </html>
