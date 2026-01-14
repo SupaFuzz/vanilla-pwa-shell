@@ -47,6 +47,8 @@ Here's all the files and what they do:
 
 ## TO-DO
 
+* (1/14/26) Firefox actually *does* support installable PWAs now?! At least on windows on FFOX Developer Edition? Because I just discovered it testing out the live link above. The app works, its just (like safari) the installer banner on `index.html` seems confused, not sure if unsupported events on that platform or just that the code wasn't expecting FFOX to actually support `manifest.json`? Will get down with that shortly! Wow!
+
 * Add push notifications. This feature is mature and well supported across browser engines.
 
     https://developer.mozilla.org/en-US/docs/Web/API/Push_API
