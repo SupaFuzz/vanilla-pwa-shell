@@ -1,0 +1,17 @@
+{
+    "name": "Demo App",
+    "short_name": "Demo",
+    "version": "1",
+    "description": "Demo for Vanilla PWA App Shell",
+    "start_url": "./app_main.html",
+    "display_override": ["fullscreen"],
+    "display": "standalone",
+    "background_color": "rgb(20, 22, 23)",
+    "theme_color": "rgb(237, 85, 59)",
+    "orientation": "natural",
+    "icons": [{
+        "src": "./gfx/app_touch_icon.svg",
+        "sizes": "48x48 72x72 96x96 120x120 167x167 180x180 512x512 1024x1024",
+        "purpose": "any"
+    }]
+}

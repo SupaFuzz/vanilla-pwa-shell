@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- make it look like an app on apple -->
+        <meta charset="utf-8" />
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-title" content="NSCAN6">
+        <link rel="apple-touch-icon" href="./gfx/app_touch_icon.svg">
+
+        <!-- make it an installable pwa -->
+        <link rel="manifest" href="./manifest.json">
+
+        <!-- pull in the app's stylesheet -->
+        <link rel="stylesheet" type="text/css" href="./main.css">
+
+        <!-- capture the install events and either show the install me or go to the app -->
+        <script>
+
+            /*
+                identifyClient()
+                this is not exhaustive by any means but it's handy
+            */
+            function identifyClient(){
+                if (navigator){
+                    if (('vendor' in navigator) && (/Apple/.test(navigator.vendor)) && ('maxTouchPoints' in navigator) && (parseInt(navigator.maxTouchPoints) > 0)){
+                        // iOS
+                        return('Safari Mobile');
+                    } else if (('vendor' in navigator) && (/Apple/.test(navigator.vendor)) && ('maxTouchPoints' in navigator) && (parseInt(navigator.maxTouchPoints) == 0)){
+                        // desktop safari
+                        return('Safari');
+                    }else if (((/Edg\//.test(navigator.userAgent)) || (/Edge\//.test(navigator.userAgent))) && ('maxTouchPoints' in navigator) && (parseInt(navigator.maxTouchPoints) > 0)){
+                        // edge mobile
+                        return('Edge Mobile');
+                    }else if ((/Edg\//.test(navigator.userAgent)) || (/Edge\//.test(navigator.userAgent))){
+                        // edge
+                        return('Edge');
+                    } else if (('vendor' in navigator) && (/Google/.test(navigator.vendor)) && (/Chrome\//.test(navigator.userAgent)) && ('maxTouchPoints' in navigator) && (parseInt(navigator.maxTouchPoints) > 0)){
+                        // chrome mobile
+                        return('Chrome Mobile');
+                    } else if (('vendor' in navigator) && (/Google/.test(navigator.vendor)) && (/Chrome\//.test(navigator.userAgent))){
+                        // chrome
+                        return('Chrome');
+                    }else if ((/Firefox\//.test(navigator.userAgent))){
+                        // firefox
+                        return('Firefox');
+                    }else{
+                        return(null);
+                    }
+                }else{
+                    return(null);
+                }
+            }
+            var platform = identifyClient();
+
+            /*
+                DOMContentLoaded listener -- like good ol jquery document.ready
+                we'll use this to setup the "unsupported platform" notice
+                should fire before 'beforeinstallprompt'
+            */
+            document.addEventListener("DOMContentLoaded", (evt) => {
+                console.log("DOMContentLoaded is here");
+                const expl = document.body.querySelector('.installSplash .content .explainer');
+                if ((expl instanceof Element) && (['Safari Mobile', 'Safari', 'Edge Mobile', 'Edge', 'Chrome Mobile', 'Chrome'].indexOf(platform) < 0)){
+                    expl.innerHTML = `
+                        <h2>Demo App Installer (Unsupported)</h2>
+                        <p>
+                            This is a Progressive Web App (PWA) which installs through your browser.
+                            This browser (${platform}) is unsupported. To install Demo App please load
+                            this page with Chrome, Edge or Safari.
+                        </p>
+                    `;
+                }
+            });
+
+            /*
+                beforeinstallprompt listener -- on Chrome/Edge anyhow, this event will
+                fire after DOMContentLoaded, if the user has not already installed the
+                app (and the manifest.json is setup and linked correctly)
+            */
+            window.addEventListener('beforeinstallprompt', (event) => {
+
+                // show the install me
+                console.log("beforeinstallprompt is here");
+                const btn = document.body.querySelector('#btnInstall');
+
+                // put a clickhandler on the install button
+                if (btn instanceof Element){
+                    btn.addEventListener('click', (evt) => {
+                        event.prompt().then((result) => {
+                            console.log(`install prompt result: ${result.outcome}`);
+                            if (! (result.outcome == "dismissed")){ btn.remove(); }
+                        });
+                    });
+                    btn.classList.remove('hideme');
+                }
+            });
+
+            /*
+                appinstalled listener -- also on Chrome/Edge, this will fire after the
+                user chooses the install option in the prompt, this forwards us to the
+                entry point for the app (and installs the serviceWorker, etc)
+            */
+            window.addEventListener('appinstalled', () => {
+                console.log("appinstalled is here");
+                window.location.href = './app_main.html';
+            });
+
+        </script>
+        <!-- little tiny css -->
+        <style type="text/css">
+
+            .hideme {
+                display: none;
+            }
+            .installSplash {
+                display: grid;
+                grid-template-columns: 2fr 3fr;
+                max-width: clamp(60rem, 66vw, 60rem);
+            }
+            .gfx {
+                margin-left: .5rem;
+                background: url('./gfx/app_touch_icon.svg');
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: center;
+            }
+            .content {
+                font-size: 1rem;
+                padding-right: 1rem;
+            }
+            h1 {
+                font-family: Comfortaa;
+                color: var(--theme-main-color);
+            }
+            .buttonContainer {
+                padding: 1rem;
+                text-align: center;
+            }
+            .buttonContainer button {
+                background-color: transparent;
+                font-size: 1.25rem;
+                border-radius: 1em;
+                color: var(--theme-main-color);
+                border: .128em solid var(--theme-main-color));
+                margin: .25em;
+                padding: .25em .66em .25em .66em;
+                font-family: var(--theme-control-font, Arial);
+            }
+            .buttonContainer button:disabled {
+                opacity: .5;
+            }
+            .buttonContainer button:hover:not(:disabled) {
+                background-color: var(--theme-weak-alert-color);
+            }
+            .buttonContainer button:active:not(:disabled) {
+                color: var(--theme-background-color);
+                background-color: var(--theme-main-color);
+            }
+            button[data-_name="btnCancel"][data-display="false"] {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="installSplash">
+            <div class="gfx"></div>
+            <div class="content">
+                <div class="explainer">
+                    <h1>Demo App Installer</h1>
+                    <p>
+                        This is a demo app. It's installable, has an app icon, and it's gotta serviceWorker.
+                        Also it's gotta "check for updates" button. That's about it. An empty shell
+                        for whatever app you wanna build, one might say.
+                    </p>
+                    <p>
+                        This is a Progressive Web App (PWA) which installs through your browser
+                        (Edge, Chrome or Safari). Though it can function when offline (queuing transactions
+                        temporarily until you are back online), it is reccomended to stay connected to a
+                        wi-fi or cellular network while using the app.
+                    </p>
+                    <p>
+                        To install Demo App on this device, click the install button below.
+                    </p>
+                </div>
+                <div class="buttonContainer">
+                    <button id="btnInstall" class="hideme">Install Demo App</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
