@@ -63,12 +63,8 @@ Here's all the files and what they do:
 
 ## TO-DO
 
-* (1/14/26) Firefox actually *does* support installable PWAs now?! At least on windows on FFOX Developer Edition? Because I just discovered it testing out the live link above. The app works, its just (like safari) the installer banner on `index.html` seems confused, not sure if unsupported events on that platform or just that the code wasn't expecting FFOX to actually support `manifest.json`? Will get down with that shortly! Wow!
-
 * Add push notifications. This feature is mature and well supported across browser engines.
 
     https://developer.mozilla.org/en-US/docs/Web/API/Push_API
 
-* Make `index.html` work properly on Safari
-
-    the `beforeinstallprompt` and `appinstalled` events which drive the install dialog are not support on Safari. You can still directly install from the `[+]` icon in the browser's location bar (or `add to homescreen` in the share menu on iOS), and the app will function normally. This just needs a nicer install banner kinda thing for Safari.
+* firefox (coming soonish) -- FFOX Dev Edition on windows already supports PWA install but it's new and it doesn't work like you'd expect exactly. It's not present on MacOS version though. Need to check on Linux version. At some point need to figure out how to decode if the firefox version is actually going to allow install or not and update the index.html install instructions
