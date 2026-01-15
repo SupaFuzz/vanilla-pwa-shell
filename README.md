@@ -32,6 +32,14 @@ Here's all the files and what they do:
 
     this is the app icon. It's also the favicon, and splash screen. Because it's SVG we don't have to worry about resolution and image dimensions. See the `icons` property in `manifest.json` -- we can specify all the standard system icon dimensions for the same file which is super nice.
 
+* `./gfx/app_touch_icon.png`
+
+    Apple gotta be different. Safari doesn't support SVG for app icon, so this is used when on MacOS and iOS
+
+*  `./gfx/apple-share-icon.svg`
+
+    For the Safari (MacOS) install instructions on `index.html`
+
 * `serviceWorker.js`
 
     this is the secret sauce that lets you run your web app without a network connection (or really, a reachable server at all). Fair warning, if DNS lookup fails (like network is up, DNS server is up, it just doesn't know the hostname it was installed from), there's a good chance the browser engine in question will refuse to start your app (though the behavior is inconsistent across platforms).
@@ -40,7 +48,7 @@ Here's all the files and what they do:
 
     this would normally be the main code for your app. Here, all it does is spawn the serviceWorker, manage button state for the `Install & Restart` button, handle click on the `Check for Updates` button, and toggle the UI mode for the `Light Mode/Dark Mode` button.
 
-* main.css
+* `./main.css`
 
     basic CSS that applies to the app as a whole and `:root` variables to drive light/dark themes
 

@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-title" content="NSCAN6">
-        <link rel="apple-touch-icon" href="./gfx/app_touch_icon.svg">
+        <link rel="apple-touch-icon" sizes="512x512" href="./gfx/apple_touch_icon.png">
 
         <!-- jazzhands -->
         <link rel="icon" type="image/x-icon" href="./gfx/app_touch_icon.svg">
@@ -63,6 +63,9 @@
             document.addEventListener("DOMContentLoaded", (evt) => {
                 console.log("DOMContentLoaded is here");
                 const expl = document.body.querySelector('.installSplash .content .explainer');
+                const inst = document.body.querySelector('.installSplash .content .explainer .instructions');
+
+                // put up the unsupported platform message
                 if ((expl instanceof Element) && (['Safari Mobile', 'Safari', 'Edge Mobile', 'Edge', 'Chrome Mobile', 'Chrome'].indexOf(platform) < 0)){
                     expl.innerHTML = `
                         <h2>Demo App Installer (Unsupported)</h2>
@@ -73,6 +76,16 @@
                         </p>
                     `;
                 }
+
+                // mutate the instructions for safari destop
+                if ((inst instanceof Element) && (platform == 'Safari')){
+                    inst.innerHTML = `
+                        To install <span class="highlight">Demo App</span> on this device,
+                        click the <span class="apple-share-icon">share icon</span> in the upper right, and
+                        select the <span class="highlight">Add to Dock</span> option.
+                    `;
+                }
+
             });
 
             /*
@@ -132,7 +145,7 @@
                 padding-right: 1rem;
             }
             h1 {
-                font-family: Comfortaa;
+                font-family: monospace;
                 color: var(--theme-main-color);
             }
             .buttonContainer {
@@ -162,6 +175,23 @@
             button[data-_name="btnCancel"][data-display="false"] {
                 display: none;
             }
+            span.highlight {
+                font-family: monospace;
+                color: var(--theme-main-color);
+            }
+            /* apple gotta be different */
+            span.apple-share-icon {
+                color: var(--theme-main-color);
+            }
+            span.apple-share-icon:after {
+                content: '*';
+                display: inline-block;
+                width: 1.5rem;
+                height: 1.5rem;
+                background-color: var(--theme-main-color);
+                mask: url('./gfx/apple-share-icon.svg');
+                mask-size: contain;
+            }
         </style>
     </head>
     <body>
@@ -181,8 +211,8 @@
                         temporarily until you are back online), it is reccomended to stay connected to a
                         wi-fi or cellular network while using the app.
                     </p>
-                    <p>
-                        To install Demo App on this device, click the install button below.
+                    <p class="instructions">
+                        To install <span class="highlight">Demo App</span> on this device, click the install button below.
                     </p>
                 </div>
                 <div class="buttonContainer">
