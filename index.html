@@ -16,7 +16,7 @@
         <!-- pull in the app's stylesheet -->
         <link rel="stylesheet" type="text/css" href="./main.css">
 
-        <!-- capture the install events and either show the install me or go to the app -->
+        <!-- capture the install events and either show the 'install me' or go to the app -->
         <script>
 
             /*
@@ -53,7 +53,7 @@
                     return(null);
                 }
             }
-            var platform = identifyClient();
+            const platform = identifyClient();
 
             /*
                 DOMContentLoaded listener -- like good ol jquery document.ready
@@ -77,12 +77,22 @@
                     `;
                 }
 
-                // mutate the instructions for safari destop
+                // mutate the instructions for safari destop (MacOS)
                 if ((inst instanceof Element) && (platform == 'Safari')){
                     inst.innerHTML = `
                         To install <span class="highlight">Demo App</span> on this device,
                         click the <span class="apple-share-icon">share icon</span> in the upper right, and
                         select the <span class="highlight">Add to Dock</span> option.
+                    `;
+                }
+
+                // mutate the instructions for safari mobile (iOS)
+                if ((inst instanceof Element) && (platform == 'Safari Mobile')){
+                    inst.innerHTML = `
+                        To install <span class="highlight">Demo App</span> on this device,
+                        touch the <span class="apple-elipses-button">elipses button</span> adjacent
+                        to the web address on the bottom right and touch the <span class="apple-share-icon">share icon</span>,
+                        swipe up, then touch <span class="apple-add-icon">Add to Home Screen</span>.
                     `;
                 }
 
@@ -183,14 +193,42 @@
             span.apple-share-icon {
                 color: var(--theme-main-color);
             }
-            span.apple-share-icon:after {
-                content: '*';
+            span.apple-share-icon:before {
+                content: '\00A0';
                 display: inline-block;
                 width: 1.5rem;
                 height: 1.5rem;
                 background-color: var(--theme-main-color);
                 mask: url('./gfx/apple-share-icon.svg');
                 mask-size: contain;
+            }
+            span.apple-elipses-button {
+                color: var(--theme-main-color);
+            }
+            span.apple-elipses-button:before {
+                content: '\00A0';
+                display: inline-block;
+                width: 1.25rem;
+                height: 1.25rem;
+                background: url('./gfx/apple-elipses-button.svg');
+                background-size: contain;
+                background-color: var(--theme-main-color);
+                border-radius: 1rem;
+                margin-right: .25rem;
+            }
+            span.apple-add-icon{
+                color: var(--theme-main-color);
+            }
+            span.apple-add-icon:before {
+                content: '\00A0';
+                display: inline-block;
+                width: 1.25rem;
+                height: 1.25rem;
+                background: url('./gfx/apple-add-icon.svg');
+                background-size: contain;
+                background-color: var(--theme-main-color);
+                border-radius: 1rem;
+                margin-right: .25rem;
             }
         </style>
     </head>
@@ -205,12 +243,7 @@
                         Also it's gotta "check for updates" button. That's about it. An empty shell
                         for whatever app you wanna build, one might say.
                     </p>
-                    <p>
-                        This is a Progressive Web App (PWA) which installs through your browser
-                        (Edge, Chrome or Safari). Though it can function when offline (queuing transactions
-                        temporarily until you are back online), it is reccomended to stay connected to a
-                        wi-fi or cellular network while using the app.
-                    </p>
+
                     <p class="instructions">
                         To install <span class="highlight">Demo App</span> on this device, click the install button below.
                     </p>
